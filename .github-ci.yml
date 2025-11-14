@@ -1,0 +1,38 @@
+# .github/workflows/ci.yml
+name: CI                 # Name shown in GitHub Actions
+
+on:
+  push:                  # Run on every push
+    branches: [ '**' ]   # All branches (or replace with main, develop, etc.)
+  pull_request:          # Run on every PR
+    branches: [ '**' ]
+
+jobs:
+  test:                                   # Job name
+    runs-on: ubuntu-latest                # Runner OS
+
+    # Optional: define a matrix to test several environments
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]       # Example for Node.js
+        # python-version: [3.10, 3.11]   # Uncomment for Python, etc.
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up the language runtime (example: Node.js)
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'                  # or 'yarn', 'pnpm'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci                     # npm ci = clean install
+
+      # 4. Run the test suite
+      - name: Run tests
+        run: npm test                   # whatever
